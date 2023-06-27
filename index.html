@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="css/styles.css" />
+	<title>Extension</title>
+	<script src="./CSInterface.js"></script>
+
+	<script>
+
+		class ColorPaletteGenerator {
+			constructor() {
+				this.colors = [];
+			}
+
+			generatePalette() {
+				this.colors = [];
+				for (let i = 0; i < 5; i++) {
+					const color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+					this.colors.push(color);
+				}
+			}
+		}
+
+		async function palettegen() {
+
+			const colorPaletteGenerator = new ColorPaletteGenerator();
+			colorPaletteGenerator.generatePalette();
+			console.log(colorPaletteGenerator.colors);
+
+			const paletteContainer = document.getElementById('palette-container');
+			paletteContainer.innerHTML = '';
+
+			colorPaletteGenerator.colors.forEach(color => {
+				const colorSquare = document.createElement('div');
+				colorSquare.className = 'pallet';
+				colorSquare.style.backgroundColor = color;
+				colorSquare.style.width = '70px';
+				colorSquare.style.height = '60px';
+				// Show color code on hover
+				colorSquare.addEventListener('mouseover', () => {
+					colorSquare.innerText = color;
+				});
+
+				// Remove color code on mouseout
+				colorSquare.addEventListener('mouseout', () => {
+					colorSquare.innerText = '';
+				});
+
+				// Copy color code on click
+				colorSquare.addEventListener('click', () => {
+					navigator.clipboard.writeText(color);
+				});
+				paletteContainer.appendChild(colorSquare);
+			});
+		}
+
+
+		var isNS = (navigator.appName == "Netscape") ? 1 : 0;
+
+		if (navigator.appName == "Netscape") document.captureEvents(Event.MOUSEDOWN || Event.MOUSEUP);
+
+		function mischandler() {
+			return false;
+		}
+
+		function mousehandler(e) {
+			var myevent = (isNS) ? e : event;
+			var eventbutton = (isNS) ? myevent.which : myevent.button;
+			if ((eventbutton == 2) || (eventbutton == 3)) return false;
+		}
+		document.oncontextmenu = mischandler;
+		document.onmousedown = mousehandler;
+		document.onmouseup = mousehandler;
+
+		function min() {
+			// Check if Adobe Illustrator is running
+
+			try {
+				var csInterface = new CSInterface();
+				var filePath = csInterface.getSystemPath(SystemPath.EXTENSION) + '/effect.js';
+
+				// Construct the JavaScript code to load and execute the external file
+				var scriptCode = `
+					$.evalFile("${filePath}");
+				`;
+
+				// Execute the script code using evalScript()
+				csInterface.evalScript(scriptCode);
+			} catch (error) {
+				var x = document.createElement("SPAN");
+				var t = document.createTextNode(error);
+				x.appendChild(t);
+				document.body.appendChild(x);
+			}
+		}
+
+
+	</script>
+</head>
+
+<body scroll="no">
+	<script src="js/libs/CSInterface.js"></script>
+	<script src="js/main.js"></script>
+
+
+	<div>
+		<button id="" class="button outline" onclick="window.location.reload();">Clear</button>
+		<button id="" class="button outline" onclick="palettegen()">Generate Pallet</button>
+		<button id="" class="button outline" onclick="min()">Minimalistic Effect</button>
+
+	</div>
+	<div id="palette-container"></div>
+
+	<div id="previewSection">
+
+
+
+	</div>
+	<script>
+
+		function getOS() {
+			var userAgent = window.navigator.userAgent,
+				platform = window.navigator.platform,
+				macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+				windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+				os = null;
+
+			if (macosPlatforms.indexOf(platform) != -1) {
+				os = "MAC";
+			} else if (windowsPlatforms.indexOf(platform) != -1) {
+				os = "WIN";
+			}
+			return os;
+		}
+
+	</script>
+
+</body>
+
+</html>
